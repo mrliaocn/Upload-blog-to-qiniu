@@ -4,7 +4,7 @@
 
 使用的是PyQt5做的界面。还挺有意思的。
 
-## Usage
+### Usage
 
 #### For All System:
 
@@ -36,5 +36,6 @@ pyinstaller -F -w -i image.ico qiniu_up.py
 
 4. ./dist/qiniu_up.exe
 
+### Update
 
-
+Fixed the bug that progress bar did not response with multi-thread.

@@ -3,7 +3,7 @@ import os
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel, QLineEdit, \
         QPushButton, QProgressBar, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog
 
-from PyQt5.QtCore import Qt, QBasicTimer
+from PyQt5.QtCore import Qt
 
 from upload import Upload
 
@@ -25,24 +25,26 @@ class Window(QWidget):
         else:
             self.upload_btn.setEnabled(False)
             self.reset_btn.setEnabled(False)
-            up = Upload(ak, sk, bk)
-            up.up_file(dr, self.file_list, self.progressHandle)
 
 
-    def progressHandle(self, cur_index, cur_file, info=""):
+            self.up = Upload(ak, sk, bk, dr, self.file_list)
 
-        if info is not "":
-            self.info_edit.append("Error happened with file %s."% cur_file)
+            self.up.signal.connect(self.progressHandle)
+            self.up.start()
+
+
+    def progressHandle(self, info):
+
+        if info[0] == 0:
+            self.all_bar.setValue(info[1])
+            self.info_edit.append("Uploading %s."%info[2])
+        elif info[0] == 1:
+            self.all_bar.setValue(info[1])
+            self.info_edit.append("Completed!")
+            self.file_list = []
+            self.reset_btn.setEnabled(True)
         else:
-            self.info_edit.append("Uploading %s."%cur_file)
-
-            self.all_bar.setValue((cur_index+1)/len(self.file_list)*100)
-            if cur_index + 1 == len(self.file_list):
-
-                self.info_edit.append("Completed!")
-                self.file_list = []
-                self.reset_btn.setEnabled(True)
-                
+            self.info_edit.append("Error happened with file %s."%info[2])
 
 
     def resetHandle(self):
